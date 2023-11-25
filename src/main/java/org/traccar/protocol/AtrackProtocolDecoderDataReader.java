@@ -18,6 +18,7 @@ import java.util.Map;
 public class AtrackProtocolDecoderDataReader {
 
     private final Map<String, QuadConsumer<Position, CellTower, String[], Integer>> keyProcessors;
+
     public AtrackProtocolDecoderDataReader() {
         keyProcessors = new HashMap<>();
         initializeKeyProcessors();
@@ -41,7 +42,7 @@ public class AtrackProtocolDecoderDataReader {
             }
             switch (mode) {
                 case 1:
-                    decodeModeOne(position,data,i,mask);
+                    decodeModeOne(position, data, i, mask);
                     break;
                 case 2:
                     decodeModeTwo(position, data, i, mask);
@@ -74,7 +75,7 @@ public class AtrackProtocolDecoderDataReader {
         }
     }
 
-    public void decodeModeTwo(Position position, ByteBuf data, int i, int mask){
+    public void decodeModeTwo(Position position, ByteBuf data, int i, int mask) {
         if (BitUtil.check(mask, 6)) {
             data.readUnsignedShort(); // battery voltage
         }
@@ -89,7 +90,7 @@ public class AtrackProtocolDecoderDataReader {
         }
     }
 
-    public void decodeModeThree(Position position, ByteBuf data, int i, int mask){
+    public void decodeModeThree(Position position, ByteBuf data, int i, int mask) {
         if (BitUtil.check(mask, 6)) {
             position.set("tag" + i + "Humidity", data.readUnsignedShort());
         }
@@ -104,7 +105,7 @@ public class AtrackProtocolDecoderDataReader {
         }
     }
 
-    public void decodeModeFour(Position position, ByteBuf data, int i, int mask){
+    public void decodeModeFour(Position position, ByteBuf data, int i, int mask) {
         if (BitUtil.check(mask, 6)) {
             int hardwareId = data.readUnsignedByte();
             if (BitUtil.check(mask, 5)) {
@@ -135,87 +136,117 @@ public class AtrackProtocolDecoderDataReader {
     private void processSA(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_SATELLITES, Integer.parseInt(values[i]));
     }
-    private void processBV(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processBV(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_BATTERY, Integer.parseInt(values[i]) * 0.1);
     }
+
     private void processMV(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_POWER, Integer.parseInt(values[i]) * 0.1);
     }
+
     private void processGQ(Position position, CellTower cellTower, String[] values, int i) {
         cellTower.setSignalStrength(Integer.parseInt(values[i]));
     }
-    private void processCE(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processCE(Position position, CellTower cellTower, String[] values, int i) {
         cellTower.setCellId(Long.parseLong(values[i]));
     }
-    private void processLC(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processLC(Position position, CellTower cellTower, String[] values, int i) {
         cellTower.setLocationAreaCode(Integer.parseInt(values[i]));
     }
-    private void processCN(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processCN(Position position, CellTower cellTower, String[] values, int i) {
         if (values[i].length() > 3) {
             cellTower.setMobileCountryCode(Integer.parseInt(values[i].substring(0, 3)));
             cellTower.setMobileNetworkCode(Integer.parseInt(values[i].substring(3)));
-        }    }
+        }
+    }
+
     private void processPC(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.PREFIX_COUNT + 1, Integer.parseInt(values[i]));
     }
+
     private void processAT(Position position, CellTower cellTower, String[] values, int i) {
         position.setAltitude(Integer.parseInt(values[i]));
     }
-    private void processRP(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processRP(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_RPM, Integer.parseInt(values[i]));
     }
-    private void processGS(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processGS(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_RSSI, Integer.parseInt(values[i]));
     }
-    private void processDT(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processDT(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_ARCHIVE, Integer.parseInt(values[i]) == 1);
     }
-    private void processVN(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processVN(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_VIN, values[i]);
     }
-    private void processTR(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processTR(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_THROTTLE, Integer.parseInt(values[i]));
     }
-    private void processET(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processET(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_COOLANT_TEMP, Integer.parseInt(values[i]));
     }
-    private void processFL(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processFL(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_FUEL_LEVEL, Integer.parseInt(values[i]));
     }
-    private void processFC(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processFC(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_FUEL_CONSUMPTION, Integer.parseInt(values[i]));
     }
-    private void processAV1(Position position, CellTower cellTower,String[] values, int i) {
+
+    private void processAV1(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.PREFIX_ADC + 1, Integer.parseInt(values[i]));
     }
-    private void processCD(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processCD(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_ICCID, values[i]);
     }
-    private void processEH(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processEH(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_HOURS, UnitsConverter.msFromHours(Integer.parseInt(values[i]) * 0.1));
     }
-    private void processIA(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processIA(Position position, CellTower cellTower, String[] values, int i) {
         position.set("intakeTemp", Integer.parseInt(values[i]));
     }
-    private void processEL(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processEL(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_ENGINE_LOAD, Integer.parseInt(values[i]));
     }
-    private void processHA(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processHA(Position position, CellTower cellTower, String[] values, int i) {
         if (Integer.parseInt(values[i]) > 0) {
             position.set(Position.KEY_ALARM, Position.ALARM_ACCELERATION);
-        }    }
-    private void processHB(Position position,CellTower cellTower, String[] values, int i) {
+        }
+    }
+
+    private void processHB(Position position, CellTower cellTower, String[] values, int i) {
         if (Integer.parseInt(values[i]) > 0) {
             position.set(Position.KEY_ALARM, Position.ALARM_BRAKING);
-        }    }
-    private void processHC(Position position,CellTower cellTower, String[] values, int i) {
+        }
+    }
+
+    private void processHC(Position position, CellTower cellTower, String[] values, int i) {
         if (Integer.parseInt(values[i]) > 0) {
             position.set(Position.KEY_ALARM, Position.ALARM_CORNERING);
-        }    }
-    private void processMT(Position position,CellTower cellTower, String[] values, int i) {
+        }
+    }
+
+    private void processMT(Position position, CellTower cellTower, String[] values, int i) {
         position.set(Position.KEY_MOTION, Integer.parseInt(values[i]) > 0);
     }
-    private void processBC(Position position,CellTower cellTower, String[] values, int i) {
+
+    private void processBC(Position position, CellTower cellTower, String[] values, int i) {
         String[] beaconValues = values[i].split(":");
         decodeBeaconData(
                 position, Integer.parseInt(beaconValues[0]), Integer.parseInt(beaconValues[1]),
@@ -225,6 +256,7 @@ public class AtrackProtocolDecoderDataReader {
     private void processUnknownKey(Position position, CellTower cellTower, String[] values, int i) {
 
     }
+
     private void initializeKeyProcessors() {
         keyProcessors.put("SA", this::processSA);
         keyProcessors.put("BV", this::processBV);
@@ -254,7 +286,6 @@ public class AtrackProtocolDecoderDataReader {
         keyProcessors.put("MT", this::processMT);
         keyProcessors.put("BC", this::processBC);
     }
-
 
 
     public void readTextCustomData(Position position, String data, String form) {
