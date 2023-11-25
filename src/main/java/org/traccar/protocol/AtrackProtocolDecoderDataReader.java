@@ -14,7 +14,6 @@ import org.traccar.model.Position;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class AtrackProtocolDecoderDataReader {
 
